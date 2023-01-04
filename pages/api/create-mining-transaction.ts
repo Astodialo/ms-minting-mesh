@@ -20,6 +20,7 @@ export default async function handler(
 ) {
   const recipientAddress = req.body.recipientAddress;
   const utxos = req.body.utxos;
+  const input = req.body.input
 
   const blockchainProvider = new KoiosProvider("preview");
 
@@ -40,27 +41,41 @@ export default async function handler(
    * TODO: Here you want to select one of your NFT that has not been minted
    */
 
-  const assetIdPrefix = "MeshToken";
-  // In this starter template, we simply randomly pick one from.
-  let selectedAssetId = Math.floor(Math.random() * 10).toString();
-  const assetMetadata = assetsMetadata[selectedAssetId];
-  const assetName = `${assetIdPrefix}${selectedAssetId}`;
+  const assetIdPrefix = "prop_";
+  let assetId = 1;
+  const assetName = `${assetIdPrefix}${assetId}`;
 
-  const asset: Mint = {
+  const assetQ: Mint = {
     assetName: assetName,
     assetQuantity: "1",
-    metadata: assetMetadata,
+    metadata: {name: assetName,
+               question: input,
+               answers: "TBD"},
     label: "721",
     recipient: {
       address: recipientAddress,
     },
   };
 
+  const assetA: Mint = {
+    assetName: assetName + "_A",
+    assetQuantity: "1",
+    metadata: {name: assetName + "_A",
+               question: input,
+               answers: "TBD"},
+    label: "721",
+    recipient: {
+      address: recipientAddress,
+    },
+  };
+
+
   const selectedUtxos = largestFirst(costLovelace, utxos, true);
 
   const tx = new Transaction({ initiator: appWallet });
   tx.setTxInputs(selectedUtxos);
-  tx.mintAsset(forgingScript, asset);
+  tx.mintAsset(forgingScript, assetQ);
+  tx.mintAsset(forgingScript, assetA);
   tx.sendLovelace(bankWalletAddress, costLovelace);
   tx.setChangeAddress(recipientAddress);
 
@@ -74,7 +89,8 @@ export default async function handler(
 
   const maskedTx = Transaction.maskMetadata(unsignedTx);
 
+  assetId ++;
   // In this starter template, we send `originalMetadata` to the frontend.
   // Not recommended, its better to save the `originalMetadata` in a database.
-  res.status(200).json({ assetName, maskedTx, originalMetadata });
+  res.status(200).json({ assetName, assetId, unsignedTx, originalMetadata });
 }

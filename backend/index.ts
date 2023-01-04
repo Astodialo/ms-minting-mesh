@@ -19,9 +19,10 @@ export async function post(route: string, body = {}) {
 
 export async function createTransaction(
   recipientAddress: string,
-  utxos: UTxO[]
+  utxos: UTxO[],
+  input: String 
 ) {
-  return await post(`create-mining-transaction`, { recipientAddress, utxos });
+  return await post(`create-mining-transaction`, { recipientAddress, utxos, input });
 }
 
 export async function signTransaction(

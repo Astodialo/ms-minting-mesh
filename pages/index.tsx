@@ -13,13 +13,15 @@ export default function Home() {
     try {
       const recipientAddress = await wallet.getChangeAddress();
       const utxos = await wallet.getUtxos();
+      const input = (document.getElementById("user-q") as HTMLInputElement).value;
 
-      const { assetName, maskedTx, originalMetadata } = await createTransaction(
+      const { assetName, unsignedTx, originalMetadata } = await createTransaction(
         recipientAddress,
-        utxos
+        utxos,
+        input
       );
 
-      const signedTx = await wallet.signTx(maskedTx, true);
+      const signedTx = await wallet.signTx(unsignedTx, true);
 
       const { appWalletSignedTx } = await signTransaction(
         assetName,
@@ -59,13 +61,16 @@ export default function Home() {
 
         <div className="demo">
           {connected ? (
-            <button
-              type="button"
-              onClick={() => startMining()}
-              disabled={loading}
-            >
-              {loading ? "Creating transaction..." : "Mint Mesh Token"}
-            </button>
+            <div>
+              <input type="text" id="user-q"/>
+              <button
+                type="button"
+                onClick={() => startMining()}
+                disabled={loading}
+              >
+                {loading ? "Creating transaction..." : "Mint Proposal"}
+              </button>
+            </div>
           ) : (
             <CardanoWallet />
           )}
