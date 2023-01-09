@@ -6,13 +6,16 @@ import {
   KoiosProvider,
   largestFirst,
 } from "@meshsdk/core";
-import type { Mint } from "@meshsdk/core";
+import { resolveDataHash } from '@meshsdk/core';
+import type { Mint, Data } from "@meshsdk/core";
 import { demoMnemonic } from "../../config/wallet";
 import {
   assetsMetadata,
   bankWalletAddress,
   costLovelace,
 } from "../../config/mint";
+
+let assetId = 1;
 
 export default async function handler(
   req: NextApiRequest,
@@ -37,32 +40,36 @@ export default async function handler(
   const appWalletAddress = appWallet.getPaymentAddress();
   const forgingScript = ForgeScript.withOneSignature(appWalletAddress);
 
+
   /**
    * TODO: Here you want to select one of your NFT that has not been minted
    */
 
-  const assetIdPrefix = "prop_";
-  let assetId = 1;
+  const assetIdPrefix = "proposal-";
   const assetName = `${assetIdPrefix}${assetId}`;
+
+  const datumMD: Data = new Map<Data,Data>();
+  datumMD.set('name: ', assetName )
+  datumMD.set('proposal: ', input) 
+  datumMD.set('answers: ', [])
+  datumMD.set('results: ', [])
+  datumMD.set('state: ', 'INIT')
 
   const assetQ: Mint = {
     assetName: assetName,
     assetQuantity: "1",
-    metadata: {name: assetName,
-               question: input,
-               answers: "TBD"},
+    metadata: {name: assetName},
     label: "721",
     recipient: {
       address: recipientAddress,
+      datum: {value: datumMD, inline : true}
     },
   };
 
   const assetA: Mint = {
     assetName: assetName + "_A",
     assetQuantity: "1",
-    metadata: {name: assetName + "_A",
-               question: input,
-               answers: "TBD"},
+    metadata: {name: assetName + "_A"},
     label: "721",
     recipient: {
       address: recipientAddress,
