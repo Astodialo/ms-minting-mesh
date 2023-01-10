@@ -2,6 +2,7 @@ import Head from "next/head";
 import { CardanoWallet, MeshBadge, useWallet } from "@meshsdk/react";
 import { createTransaction, signTransaction } from "../backend";
 import { useState } from "react";
+import { idArray } from "../config/mint"
 
 export default function Home() {
   const { wallet, connected } = useWallet();
@@ -15,7 +16,7 @@ export default function Home() {
       const utxos = await wallet.getUtxos();
       const input = (document.getElementById("user-q") as HTMLInputElement).value;
 
-      const { assetName, unsignedTx, originalMetadata } = await createTransaction(
+      const { assetName, assetId, unsignedTx, originalMetadata } = await createTransaction(
         recipientAddress,
         utxos,
         input

@@ -4,6 +4,11 @@ export const costLovelace = "10000000";
 
 export const bankWalletAddress = `addr_test1qzmwuzc0qjenaljs2ytquyx8y8x02en3qxswlfcldwetaeuvldqg2n2p8y4kyjm8sqfyg0tpq9042atz0fr8c3grjmysm5e6yx`;
 
+export var idArray = Array.from(
+  {length: 100},
+  (_, index) => 100 - index
+);
+
 export const assetsMetadata: { [id: string]: AssetMetadata } = {
   "0": {
     name: "Proposal 00",

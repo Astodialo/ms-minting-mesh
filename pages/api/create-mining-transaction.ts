@@ -11,11 +11,11 @@ import type { Mint, Data } from "@meshsdk/core";
 import { demoMnemonic } from "../../config/wallet";
 import {
   assetsMetadata,
+  idArray,
   bankWalletAddress,
   costLovelace,
 } from "../../config/mint";
 
-let assetId = 1;
 
 export default async function handler(
   req: NextApiRequest,
@@ -46,6 +46,7 @@ export default async function handler(
    */
 
   const assetIdPrefix = "proposal-";
+  const assetId = idArray.pop();
   const assetName = `${assetIdPrefix}${assetId}`;
 
   const datumMD: Data = new Map<Data,Data>();
@@ -96,7 +97,6 @@ export default async function handler(
 
   const maskedTx = Transaction.maskMetadata(unsignedTx);
 
-  assetId ++;
   // In this starter template, we send `originalMetadata` to the frontend.
   // Not recommended, its better to save the `originalMetadata` in a database.
   res.status(200).json({ assetName, assetId, unsignedTx, originalMetadata });
